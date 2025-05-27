@@ -7179,6 +7179,15 @@ nuxi@^3.10.0:
   optionalDependencies:
     fsevents "~2.3.3"
 
+"nuxt-app@file:":
+  resolved "file:"
+  dependencies:
+    "@iconify-json/lucide" "1.1.145"
+    "@nuxt/image" "1.1.0"
+    "@nuxt/ui" "2.11.1"
+    nuxt-app "file:"
+    vue-use-fixed-header "^2.0.0"
+
 nuxt-component-meta@^0.6.0:
   version "0.6.6"
   resolved "https://registry.npmjs.org/nuxt-component-meta/-/nuxt-component-meta-0.6.6.tgz"
