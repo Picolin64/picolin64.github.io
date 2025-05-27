@@ -4,6 +4,14 @@ Personal cybersecurity blog.
 
 This site is based on the [Zooper](https://github.com/fayazara/zooper) template. Credits to [Fayaz Ahmed](https://github.com/fayazara).
 
+## Tech Stack
+
+1. Nuxt JS
+2. Tailwind CSS
+3. Vue
+4. Nuxt Content Module
+5. Shiki JS ES
+
 ## Installation
 
 1. ``git clone`` this repo.
