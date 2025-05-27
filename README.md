@@ -1,53 +1,21 @@
-[<img src="https://github.com/user-attachments/assets/60e89805-26fd-4074-8ced-447fb148c7e6">](http://supersaas.dev?ref=github)
+# picolin64.github.io
 
+Personal cybersecurity blog.
 
-# Zooper
-
-Zooper is a beautiful personal portfolio template for developers, programmers, freelancers and designers.
-
-![Zooper template home preview](https://zooper.pages.dev/preview.jpg)
-
-
-## Features
-
-Full features blog 📝.
-CMS ready 🚀.
-Super fast ⚡.
-SEO friendly 📈.
-Fully responsive 📱.
-Dark mode 🌗.
-Syntax highlighting 🌈.
-Social media links 🔗.
-Code preview playground 🎮.
-Uses page 🧑‍💻
-Bookmarks 📑.
-
-## Roadmap
-
-Comments
-Tags
-Categories
-Pagination
-Sitemap
-RSS feeds
-Search
-Likes
-
-## Tech Stack
-
-1. Nuxt JS
-2. Tailwind CSS
-3. Vue
-4. Nuxt Content Module
-5. Shiki JS ES
+This site is based on the [Zooper](https://github.com/fayazara/zooper) template. Credits to [Fayaz Ahmed](https://github.com/fayazara).
 
 ## Installation
 
-1. `git clone` this repo or click on `Use this template` button.
-2. `cd` into the project directory.
-3. Run `yarn install` to install the dependencies.
-4. Run `yarn dev` to start the development server.
+1. ``git clone`` this repo.
+2. ``cd`` into the project directory.
+3. Run ``npm install``.
+4. Run ``npm run dev`` to start a local development server.
 
-## Contributing
+## Deploy changes
 
-Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
+1. Run ``npm run deploy``. This command builds the application, pre-renders every route as a HTML file (GitHub Pages only supports static hosting), creates the .nojekyll file to avoid conflicts with resource loading and pushes the content generated to the "gh-pages" branch (you don't need to create this branch before running the command).
+2. Commit and push changes to your GitHub repo.
+3. In the GitHub repo, go to the Settings tab, then Pages menu and select "gh-pages" as the branch the site will be built. Save changes.
+4. Wait for deploy.
+
+You need to follow steps 1 and 2 everytime you make any changes. Step 3 only needs to be done once for the first deployment.
