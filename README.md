@@ -26,4 +26,12 @@ This site is based on the [Zooper](https://github.com/fayazara/zooper) template.
 3. In the GitHub repo, go to the Settings tab, then Pages menu and select "gh-pages" as the branch the site will be built. Save changes.
 4. Wait for deploy.
 
-You need to follow steps 1 and 2 everytime you make any changes. Step 3 only needs to be done once for the first deployment.
+You need to follow steps 1 and 2 every time you make any changes. Step 3 only needs to be done once for the first deployment.
+
+## To do
+
+- Implement English language.
+- Add navigation menu for page sections.
+- Add navigation menu for writeups grouped according to their respective platform.
+- Add tags to pages.
+- Implement a search bar.
