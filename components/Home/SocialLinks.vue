@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h2 class="uppercase text-xs font-semibold text-gray-400 mb-4">FIND ME ON</h2>
+    <h2 class="uppercase text-xs font-semibold text-gray-400 mb-4">ENCUENTRAME EN</h2>
     <div class="space-y-5">
       <NuxtLink
         v-for="link in links"
@@ -25,24 +25,19 @@
 <script lang="ts" setup>
 const links = [
   {
-    name: "Twitter",
-    url: "https://twitter.com/fayazara",
-    icon: "mdi:twitter",
-  },
-  {
     name: "GitHub",
-    url: "https://github.com/fayazara",
-    icon: "mdi:github",
+    url: "https://github.com/Picolin64",
+    icon: "simple-icons:github",
   },
   {
-    name: "Linkedin",
-    url: "https://www.linkedin.com/in/fayaz-aralikatti/",
-    icon: "mdi:linkedin",
+    name: "TryHackMe",
+    url: "https://tryhackme.com/p/Picolin64",
+    icon: "simple-icons:tryhackme",
   },
   {
-    name: "Telegram",
-    url: "https://t.me/fayazara",
-    icon: "mdi:telegram",
-  },
+    name: "Hack The Box",
+    url: "https://app.hackthebox.com/profile/2012205",
+    icon: "simple-icons:hackthebox",
+  }
 ];
 </script>

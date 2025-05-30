@@ -1,6 +1,6 @@
 export default defineAppConfig({
   ui: {
-    primary: "teal",
+    primary: "lime",
     gray: "neutral",
     formGroup: {
       help: "text-xs mt-1 text-gray-500 dark:text-gray-400",
@@ -25,7 +25,7 @@ export default defineAppConfig({
       },
     },
     container: {
-      constrained: "max-w-2xl",
+      constrained: "max-w-3xl",
     },
   },
 });

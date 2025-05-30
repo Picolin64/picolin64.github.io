@@ -1,17 +1,17 @@
 <template>
   <div>
     <h2 class="uppercase text-xs font-semibold text-gray-400 mb-6">
-      POSTS RECIENTES
+      WRITEUPS RECIENTES
     </h2>
     <ul class="space-y-16">
-      <li v-for="(article, id) in articles" :key="id">
-        <AppArticleCard :article="article" />
+      <li v-for="(writeup, id) in writeups" :key="id">
+        <AppWriteupCard :writeup="writeup" />
       </li>
     </ul>
     <div class="flex items-center justify-center mt-6 text-sm">
       <UButton
-        label="Todos mis posts &rarr;"
-        to="/blog"
+        label="Todos mis writeups &rarr;"
+        to="/writeups"
         variant="link"
         color="gray"
       />
@@ -20,8 +20,8 @@
 </template>
 
 <script lang="ts" setup>
-const { data: articles } = await useAsyncData("articles-home", () =>
-  queryContent("/blog")
+const { data: writeups } = await useAsyncData("writeups-home", () =>
+  queryContent("/writeups")
     .where({ slug: { $ne: "template" } })
     .sort({ published: -1 })
     .limit(3)
