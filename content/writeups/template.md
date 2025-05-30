@@ -1,6 +1,5 @@
 ---
 title: "Plantilla de writeup"
-description: "Esto es la plantilla para un writeup."
 published: 2025/05/28
 slug: "template"
 ---
