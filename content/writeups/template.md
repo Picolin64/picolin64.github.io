@@ -20,3 +20,11 @@ Descripción
 ## Post-explotación
 
 Descripción
+
+## Resumen ejecutivo
+
+Descripción
+
+## Remediación
+
+Descripción
