@@ -14,8 +14,10 @@
 
 <script setup>
 useSeoMeta({
-  title: "Picolin64",
-  description: "Soy Picolin64, estudiante de Ingeniería de Sistemas y apasionado por la ciberseguridad.",
-  ogImage: "/favicon.ico"
+  ogType: "website",
+  ogTitle: "Picolin64",
+  ogDescription: "Soy Picolin64, estudiante de Ingeniería de Sistemas y apasionado por la ciberseguridad. Este es mi blog personal de ciberseguridad.",
+  ogImage: "https://picolin64.github.io/favicon.ico",
+  twitterCard: "summary_large_image"
 });
 </script>
