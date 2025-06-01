@@ -15,7 +15,7 @@
 <script setup>
 useSeoMeta({
   title: "Picolin64",
-  description:
-    "",
+  description: "Soy Picolin64, estudiante de Ingeniería de Sistemas y apasionado por la ciberseguridad.",
+  ogImage: "/favicon.ico"
 });
 </script>
