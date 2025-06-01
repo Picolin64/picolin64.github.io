@@ -4,7 +4,11 @@ published: 2025/05/28
 slug: "template"
 ---
 
-## Escaneo/enumeración
+## Escaneo
+
+Descripción
+
+## Enumeración de servicios
 
 Descripción
 
@@ -12,11 +16,19 @@ Descripción
 
 Descripción
 
-## Escalación de privilegios
+## Enumeración post-Explotación
 
 Descripción
 
-## Post-explotación
+## Escalada de privilegios
+
+Descripción
+
+## Persistencia
+
+Descripción
+
+## Post-Root
 
 Descripción
 
@@ -25,5 +37,9 @@ Descripción
 Descripción
 
 ## Remediación
+
+Descripción
+
+## Conclusiones
 
 Descripción
