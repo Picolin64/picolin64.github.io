@@ -2,6 +2,7 @@
 title: "Plantilla de writeup"
 published: 2025/05/28
 slug: "template"
+image: "/avatar.jpg"
 ---
 
 ## Escaneo
