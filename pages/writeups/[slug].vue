@@ -1,7 +1,7 @@
 <template>
   <main class="min-h-screen">
     <div
-      class="prose dark:prose-invert prose-code:before:hidden prose-code:after:hidden prose-code:text-base prose-code:bg-gray-300 dark:prose-code:bg-gray-700 prose-blockquote:not-italic before:[&_blockquote_p:first-of-type]:content-none after:[&_blockquote_p:last-of-type]:content-none prose-pre:bg-gray-900 prose-img:ring-1 prose-img:ring-gray-200 dark:prose-img:ring-white/10 prose-img:rounded-lg max-w-4xl"
+      class="prose dark:prose-invert prose-code:before:hidden prose-code:after:hidden prose-code:text-base prose-code:bg-gray-300 dark:prose-code:bg-gray-700 prose-blockquote:not-italic before:[&_blockquote_p:first-of-type]:content-none after:[&_blockquote_p:last-of-type]:content-none prose-pre:bg-gray-900 prose-img:ring-1 prose-img:ring-gray-200 dark:prose-img:ring-white/10 prose-img:rounded-lg max-w-5xl"
     >
       <ContentDoc v-slot="{ doc }" tag="writeup">
         <article>
