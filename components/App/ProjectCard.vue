@@ -5,7 +5,7 @@
     target="_blank"
     external
   >
-    <div class="max-w-sm">
+    <div class="max-w-lg">
       <h3 class="text-sm font-medium group-hover:text-primary-600">
         {{ project.name }}
       </h3>
@@ -17,7 +17,7 @@
     <UAvatar
       :src="project.thumbnail"
       :ui="{ rounded: 'rounded z-10 relative' }"
-      size="md"
+      size="xl"
       :alt="project.name"
     />
   </NuxtLink>
