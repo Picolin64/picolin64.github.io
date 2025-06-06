@@ -1,11 +1,11 @@
 <template>
   <main class="min-h-screen">
     <AppHeader class="mb-16" title="Writeups" :description="description" />
-    <ul class="space-y-16">
-      <li v-for="(writeup, id) in writeups" :key="id">
+    <div class="w-3/1 grid grid-cols-3 gap-y-10">
+      <div v-for="(writeup, id) in writeups" :key="id">
         <AppWriteupCard :writeup="writeup" />
-      </li>
-    </ul>
+      </div>
+    </div>
   </main>
 </template>
 

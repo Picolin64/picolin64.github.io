@@ -1,13 +1,13 @@
 <template>
   <div>
-    <h2 class="uppercase text-xs font-semibold text-gray-400 mb-6">
+    <h2 class="uppercase text-sm font-semibold text-gray-400 mb-6">
       WRITEUPS RECIENTES
     </h2>
-    <ul class="space-y-16">
-      <li v-for="(writeup, id) in writeups" :key="id">
+    <div class="w-3/1 grid grid-cols-3 gap-y-10">
+      <div v-for="(writeup, id) in writeups" :key="id">
         <AppWriteupCard :writeup="writeup" />
-      </li>
-    </ul>
+      </div>
+    </div>
     <div class="flex items-center justify-center mt-6 text-sm">
       <UButton
         label="Todos mis writeups &rarr;"
@@ -25,7 +25,7 @@ const { data: writeups } = await useAsyncData("writeups-home", () =>
     .where({ slug: { $ne: "template" } })
     .sort({ published: -1 })
     .limit(3)
-    .only(["title", "description", "published", "slug", "_path"])
+    .only(["title", "description", "published", "slug", "image", "_path"])
     .find()
 );
 </script>

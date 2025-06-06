@@ -1,23 +1,20 @@
 <template>
   <NuxtLink :to="writeup._path" class="group">
     <article>
-      <time
-        class="relative z-10 order-first mb-3 flex items-center text-sm text-gray-400 dark:text-gray-500 pl-3.5"
-        datetime="2022-09-05"
-        ><span
-          class="absolute inset-y-0 left-0 flex items-center"
-          aria-hidden="true"
-          ><span
-            class="h-4 w-0.5 rounded-full bg-gray-200 dark:bg-gray-500"
-          ></span
-        ></span>
-        {{ getReadableDate(writeup.published) }}
-      </time>
+      <NuxtImg :src="writeup.image" alt="writeup-thumbnail"
+      class="ring-2 border ring-gray-200 border-gray-300 dark:ring-white/10 dark:border-gray-800 hover:ring-4 transition-all duration-300 bg-gray-200 dark:bg-gray-900 rounded-full h-20 w-20 sm:h-24 sm:w-24 mb-1"
+      sizes="96px sm:128px" placeholder format="webp" />
       <h2
-        class="text-base font-semibold font-display tracking-tight text-gray-800 dark:text-gray-100 group-hover:text-primary-600"
+        class="text-lg text-wrap font-semibold font-display tracking-tight text-gray-800 dark:text-gray-100 group-hover:text-primary-600"
       >
         {{ writeup.title }}
       </h2>
+      <time
+        class="relative z-10 order-first mb-3 text-sm text-gray-400 dark:text-gray-500"
+        datetime="2022-09-05"
+        >
+        {{ getReadableDate(writeup.published) }}
+      </time>
     </article>
   </NuxtLink>
 </template>
