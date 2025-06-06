@@ -2,6 +2,7 @@
 title: "TryHackMe | Agent Sudo"
 published: 2025/05/30
 slug: "tryhackme-agent-sudo"
+image: "/writeups/tryhackme-agent-sudo/thumbnail.png"
 ---
 
 <img src="/writeups/tryhackme-agent-sudo/thumbnail.png" width=200px heigh=200px/>
@@ -10,7 +11,7 @@ slug: "tryhackme-agent-sudo"
 
 ## Escaneo
 
-Escaneamos todos los puertos TCP de la maquina objetivo con Nmap.
+Escaneamos todos los puertos TCP de la maquina objetivo con **Nmap**.
 
 ```bash
 sudo nmap -n -Pn -T4 10.10.195.209 -oN nmap.txt
@@ -29,7 +30,7 @@ PORT   STATE SERVICE
 80/tcp open  http
 ```
 
-Obtenemos información de los puertos abiertos.
+Descubrimos el puerto ``21`` para ``FTP``, puerto ``22`` para ``SSH`` y puerto ``80`` para ``HTTP``. Obtenemos información de los puertos abiertos.
 
 ```bash
 sudo nmap -sCV -n -Pn -T4 10.10.195.209 -oN nmap-ports.txt
@@ -61,15 +62,15 @@ Service Info: OSs: Unix, Linux; CPE: cpe:/o:linux:linux_kernel
 
 ### TCP/21
 
-No es posible realizar un inicio de sesión anónimo en el servicio FTP. Por lo que tendremos que revisitar este puerto mas adelante.
+No es posible realizar un inicio de sesión anónimo en el servicio ``FTP``. Por lo que tendremos que revisitar este puerto mas adelante.
 
 ### TCP/80
 
-Se nos da la bienvenida con un mensaje críptico.
+Al ingresar a la pagina web, se nos da la bienvenida con un mensaje críptico.
 
 ![image-1](/writeups/tryhackme-agent-sudo/image-1.png)
 
-"user-agent" se refiere a la cabecera HTTP "User-Agent", por lo que debemos de cambiarla para poder acceder. ¿Pero que "código nombre" debemos utilizar? Puesto que el mensaje fue firmado por Agent R, podemos intuir que nuestro código nombre corresponde a alguna de las letras del abecedario.
+"user-agent" se refiere a la cabecera HTTP ``User-Agent``, por lo que debemos de cambiarla para poder acceder. ¿Pero que "código nombre" debemos utilizar? Puesto que el mensaje fue firmado por ``Agent R``, podemos intuir que nuestro código nombre corresponde a alguna de las letras del abecedario.
 
 Creamos una lista de palabras con todas las letras del abecedario en mayúscula haciendo uso de **TTPassGen**.
 
@@ -86,7 +87,7 @@ Y
 Z
 ```
 
-Enviamos solicitudes con **ffuf**. Puesto que la lista de palabras es corta, y no sabemos exactamente que esperar de una respuesta adecuada, podemos optar por no filtrar las respuestas y examinarlas manualmente. Sin embargo, también podemos suponer que una respuesta adecuada contendrá un código de respuesta diferente a 200 o tendrá un tamaño diferente al usual (218 bytes).
+Enviamos solicitudes con **ffuf**. Puesto que la lista de palabras es corta, y no sabemos exactamente que esperar de una respuesta adecuada, podemos optar por no filtrar las respuestas y examinarlas manualmente. Sin embargo, también podemos suponer que una respuesta adecuada contendrá un código de respuesta diferente a ``200 OK`` o tendrá un tamaño diferente al usual de 218 bytes.
 
 Para propósitos educativos, elegiremos seguir las redirecciones y filtrar las respuestas basadas en su tamaño.
 
@@ -106,7 +107,7 @@ C                       [Status: 200, Size: 177, Words: 27, Lines: 8, Duration: 
 
 > La letra C originalmente nos redirige a otra pagina, mientras que la letra R nos muestra otro mensaje. Si hubiéramos filtrado todas las respuestas con código 200, hubiéramos omitido esta ultima respuesta.
 
-Al enviar una petición con el User-Agent "R", obtenemos una respuesta ligeramente diferente a la original (pero sin importancia). La letra "C" nos revela una respuesta completamente diferente.
+El User-Agent R y C retornan respuestas diferentes a la estándar. Al enviar una petición con la cabecera ``User-Agent: R``, obtenemos una respuesta ligeramente diferente a la original (pero sin importancia). La cabecera ``User-Agent: C`` nos revela una respuesta completamente diferente.
 
 ```bash
 curl -sL -H "User-Agent: C" http://10.10.195.209/
@@ -123,15 +124,15 @@ From,<br>
 Agent R
 ```
 
-Descubrimos el nombre de usuario "chris" y que su contraseña es débil.
+Descubrimos el nombre de usuario ``chris`` y que su contraseña es débil.
 
 Si intentamos enumerar directorios y paginas web, tales como formularios de inicio de sesión, no obtendremos resultados.
 
 ## Explotación
 
-### SSH
+### ¿SSH?
 
-Al no encontrar un vector de explotación evidente, usaremos **hydra** para obtener la contraseña del servicio SSH mediante fuerza bruta.
+Al no encontrar un vector de explotación evidente, usaremos **hydra** para obtener la contraseña del servicio ``SSH`` mediante fuerza bruta.
 
 Iniciar sesión en este servicio corresponde al camino hacia el éxito mas directo, por tanto tiene sentido probar un ataque de fuerza bruta primero con este servicio. Pero en un entorno real este servicio estará fuertemente protegido y monitorizado, por lo que deberíamos de probar en otros lugares primero.
 
@@ -141,7 +142,7 @@ Finalmente, este ataque falla en obtener una contraseña valida en un intervalo 
 
 ### FTP
 
-Al fallar el anterior ataque, esta vez lo intentaremos en el servicio FTP.
+Al fallar el anterior ataque, esta vez lo intentaremos en el servicio ``FTP``, haciendo uso de la famosa lista de palabras ``rockyou.txt``.
 
 > Si hay indicios de que una contraseña es débil, vale la pena usar listas de palabras conocidas como rockyou.txt (Solo en CTFs).
 
@@ -153,14 +154,13 @@ hydra -l "chris" -P /usr/share/wordlists/rockyou.txt -f -vV 10.10.195.209 ftp
 hydra -l "chris" -P /usr/share/wordlists/rockyou.txt -f -vV 10.10.195.209 ftp
 
 <SNIP>
-[ATTEMPT] target 10.10.195.209 - login "chris" - pass "freedom" - 256 of 14344399 [child 9] (0/0)
 [21][ftp] host: 10.10.195.209   login: chris   password: crystal
 [STATUS] attack finished for 10.10.195.209 (valid pair found)
 1 of 1 target successfully completed, 1 valid password found
 Hydra (https://github.com/vanhauser-thc/thc-hydra) finished at 2025-05-30 20:05:43
 ```
 
-Ingresamos al servidor FTP con las anteriores credenciales y listamos los archivos.
+Obtenemos la contraseña ``crystal``. Ingresamos al servidor ``FTP`` con estas credenciales y listamos los archivos.
 
 ```text
 ftp> ls
@@ -172,7 +172,7 @@ ftp> ls
 226 Directory send OK.
 ```
 
-Descargamos los archivos de forma recursiva.
+El servidor ``FTP`` contiene tres archivos: Dos imágenes y un archivo de texto. Los descargamos de forma recursiva.
 
 ```text
 ftp> prompt
@@ -186,9 +186,9 @@ local: cutie.png remote: cutie.png
 <SNIP>
 ```
 
-> Usamos el comando "promt" para evitar tener que confirmar manualmente la descarga de cada archivo.
+> Usamos el comando *promt* para evitar tener que confirmar manualmente la descarga de cada archivo.
 
-A simple vista, no hay nada fuera de lo usual en las imágenes descargadas. El archivo de texto contiene el siguiente mensaje.
+A simple vista, no hay nada fuera de lo usual en las imágenes descargadas. El archivo ``To_agentJ.txt`` contiene el siguiente mensaje.
 
 ```text [To_agentJ.txt]
 Dear agent J,
@@ -201,9 +201,9 @@ Agent C
 
 ### Esteganografía
 
-Una de las imágenes contiene la contraseña de Agent R. Debemos realizar estegoanálisis en busca de un mensaje escondido. Podemos realizar este proceso con muchas herramientas, pero en CTFs usualmente podremos obtener información oculta haciendo uso de *exiftool*, *strings*, *binwalk* y *steghide* (No esperes hacer uso de estas herramientas en pruebas de penetración reales).
+Según el mensaje anterior, una de las imágenes contiene la contraseña de Agent R. Debemos realizar estegoanálisis en busca de un mensaje escondido. Podemos realizar este proceso con muchas herramientas, pero en CTFs usualmente podremos obtener información oculta haciendo uso de *exiftool*, *strings*, *binwalk* y *steghide* (No esperes hacer uso de estas herramientas en pruebas de penetración reales).
 
-*exiftool* no revela nada importante, pero **strings** si lo hace.
+La herramienta *exiftool* no revela nada importante en ambas imágenes. Pero **strings** revela algo en la imagen `cutie.png`.
 
 ```bash
 strings cutie.png | head -n 20 && echo "....." && strings cutie.png | tail -n 20
@@ -220,7 +220,7 @@ To_agentR.txt
 EwwT
 ```
 
-Descubrimos que la imagen contiene un archivo de texto oculto. Para extraerlo hacemos uso de **binwalk**.
+Descubrimos que ``cutie.png`` contiene un archivo de texto incrustado. Para extraerlo hacemos uso de **binwalk**.
 
 ```bash
 binwalk -e cutie.png
@@ -239,7 +239,7 @@ WARNING: Extractor.execute failed to run external extractor 'jar xvf '%e'': [Err
 WARNING: One or more files failed to extract: either no utility was found or it's unimplemented
 ```
 
-Los archivos fueron extraídos en una nueva carpeta. Dentro de esta encontramos un archivo zip, sin embargo *unzip* falla en extraer este archivo, por lo que debemos de usar **7zip**.
+Los archivos fueron extraídos en la carpeta ``_cutie.png.extracted``. Dentro de esta carpeta encontramos el archivo ``8702.zip`` que no pudo ser extraído automáticamente. Sin embargo *unzip* falla en extraer este archivo, por lo que debemos de usar **7zip**.
 
 ```bash
 7zip x 8702.zip
@@ -247,13 +247,13 @@ Los archivos fueron extraídos en una nueva carpeta. Dentro de esta encontramos 
 
 ### Crackeo de zip
 
-El archivo esta protegido por una contraseña. Para *crackearla* haremos uso de **zip2john**.
+El archivo ``8702.zip`` esta protegido por una contraseña. Para *crackearla*, primero debemos debemos de convertir el archivo ZIP en un formato adecuado para *john* haciendo uso de **zip2john**.
 
 ```bash
 zip2john 8702.zip > zip2john.txt
 ```
 
-*Crackeamos* la contraseña con **john**.
+*Crackeamos* la contraseña con **john** haciendo uso del archivo ``zip2john.txt`` generado anteriormente y la lista de palabras ``rockyou.txt``.
 
 ```bash
 john --wordlist=/usr/share/wordlists/rockyou.txt zip2john.txt
@@ -269,7 +269,7 @@ Use the "--show" option to display all of the cracked passwords reliably
 Session completed.
 ```
 
-El archivo descomprimido contiene el siguiente mensaje.
+Encontramos que la contraseña para descomprimir el archivo es ``alien``. Al descomprimir el archivo ZIP obtenemos el archivo de texto ``To_agentR.txt`` el cual contiene el siguiente mensaje.
 
 ```text [_cutie.png.extracted/To_agentR.txt]
 Agent C,
@@ -280,11 +280,66 @@ By,
 Agent R
 ```
 
-Al principio esto no parece sernos de utilidad, pero la cadena de texto "QXJlYTUx" puede estar codificada. Ingresamos esta cadena de texto en **CyberChef**. La pagina automáticamente reconoce que esta cadena de texto esta codificada en Base64. Al decodificarla obtenemos la frase "Area51".
+A simple vista esto no parece sernos de utilidad, pero la cadena de texto ``QXJlYTUx`` puede estar codificada. Ingresamos esta cadena de texto en [CyberChef](https://cyberchef.io/). La pagina automáticamente reconoce que esta cadena de texto esta codificada en Base64. Al decodificarla obtenemos la frase ``Area51``.
 
-¿Obtuvimos la contraseña de SSH? Resulta no ser valida. Si esta imagen contiene un archivo escondido, probablemente la otra imagen también.
+¿Obtuvimos la contraseña de SSH? Resulta no ser valida. Si esta imagen contiene un archivo incrustado, probablemente la otra imagen también.
 
-**strings** revela `12345`
+**strings** revela que la imagen ``cute-alien.png`` contiene información adicional incrustada.
+
+```bash
+strings cute-alien.png | head -n 20 && echo "....." && strings cute-alien.png | tail -n 20
+```
+
+```text
+strings cute-alien.png | head -n 20 && echo "....." && strings cute-alien.png | tail -n 20
+
+JFIF
+ , #&')*)
+-0-(0%()(
+((((((((((((((((((((((((((((((((((((((((((((((((((
+$3br
+%&'()*456789:CDEFGHIJSTUVWXYZcdefghijstuvwxyz
+        #3R
+&'()*56789:CDEFGHIJSTUVWXYZcdefghijstuvwxyz
+~U,q
+.c@6
+<SNIP>
+```
+
+> Nota las cadenas de caracteres inusuales en las primeras lineas de la salida. Definitivamente hay información adicional incrustada en la imagen. Compara la salida de *strings* anterior con el de una imagen normal.
+
+*binwalk* no revela archivos incrustados. Es posible que la información adicional haya sido incrustada mediante métodos de esteganografía.
+
+¿Recuerdas la frase anterior? Si se hizo uso de esteganografía para ocultar información, esta habrá sido ocultada con la ayuda de una frase secreta. Es posible que la frase anterior corresponda a la frase secreta. Para extraer esta información haremos uso de **steghide**.
+
+```bash
+steghide extract -sf cute-alien.jpg -p "Area51"
+```
+
+```text
+steghide extract -sf cute-alien.jpg -p "Area51"
+
+wrote extracted data to "message.txt".
+```
+
+> Alternativamente, si no conocemos la frase secreta para extraer información de un archivo de esteganografía, podemos hacer uso de *stegseek* para *crackearla* haciendo uso de una lista de palabras.
+
+La información fue extraída en el archivo ``message.txt``.
+
+```text [message.txt]
+Hi james,
+
+Glad you find this message. Your login password is hackerrules!
+
+Don't ask me why the password look cheesy, ask agent R who set this password for you.
+
+Your buddy,
+chris
+```
+
+### SSH
+
+Descubrimos el usuario ``james`` y su contraseña ``hackerrules!``. Usamos estas credenciales para ingresar al servidor SSH.
 
 ## Escalada de privilegios
 
