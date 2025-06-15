@@ -22,6 +22,17 @@ This site is based on the [Zooper](https://github.com/fayazara/zooper) template.
 ## Deploy changes
 
 1. Run ``npm run deploy``. This command builds the application, pre-renders every route as a HTML file (GitHub Pages only supports static hosting), creates the .nojekyll file to avoid conflicts with resource loading and pushes the content generated to the "gh-pages" branch (you don't need to create this branch before running the command).
+
+    **Important:** If you get any of the following errors after executing the last command:
+
+    ```text
+    FATAL ERROR: Ineffective mark-compacts near heap limit Allocation failed - JavaScript heap out of memory
+
+    FATAL ERROR: CALL_AND_RETRY_LAST Allocation failed - JavaScript heap out of memory
+    ```
+
+    Then you need to increase the default amount of memory allocated by Node.js to a minimum of 8GB. See <https://bobbyhadz.com/blog/javascript-heap-out-of-memory#setting-the-node_options-environment-variable-on-windows> for further instructions.
+
 2. Commit and push changes to your GitHub repo.
 3. In the GitHub repo, go to the Settings tab, then Pages menu and select "gh-pages" as the branch the site will be built. Save changes.
 4. Wait for deploy.
