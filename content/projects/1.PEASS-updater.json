@@ -1,0 +1,6 @@
+{
+  "name": "PEASS-updater",
+  "url": "https://github.com/Picolin64/PEASS-updater",
+  "description": "Script para descargar y actualizar los scripts de la suite PEAS de forma automática y granular.",
+  "thumbnail": "/projects/PEASS-updater.png"
+}
