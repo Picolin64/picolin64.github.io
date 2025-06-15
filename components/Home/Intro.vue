@@ -18,6 +18,7 @@ useSeoMeta({
   ogTitle: "Picolin64",
   ogDescription: "Soy Picolin64, estudiante de Ingeniería de Sistemas y apasionado por la ciberseguridad. Este es mi blog personal de ciberseguridad.",
   ogImage: "https://picolin64.github.io/favicon.ico",
+  ogUrl: "https://picolin64.github.io/",
   twitterCard: "summary_large_image"
 });
 </script>
