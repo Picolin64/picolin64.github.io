@@ -8,7 +8,7 @@
         :to="link.url"
         target="_blank"
         external
-        class="flex items-end gap-4 dark:hover:text-gray-300 group"
+        class="flex items-end gap-4 dark:hover:text-lime-500 group"
       >
         <span class="text-base">
           {{ link.name }}
