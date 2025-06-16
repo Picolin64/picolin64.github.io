@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h2 class="uppercase text-xs font-semibold text-gray-400 mb-4">ENCUENTRAME EN</h2>
+    <h2 class="uppercase text-sm font-semibold text-gray-400 mb-4">ENCUENTRAME EN</h2>
     <div class="space-y-5">
       <NuxtLink
         v-for="link in links"
@@ -10,7 +10,7 @@
         external
         class="flex items-end gap-4 dark:hover:text-gray-300 group"
       >
-        <span class="text-sm">
+        <span class="text-base">
           {{ link.name }}
         </span>
         <div
@@ -24,6 +24,11 @@
 
 <script lang="ts" setup>
 const links = [
+  {
+    name: "LinkedIn",
+    url: "https://www.linkedin.com/in/david-cleves-guzm%C3%A1n-4b9214369/",
+    icon: "simple-icons:linkedin",
+  },
   {
     name: "GitHub",
     url: "https://github.com/Picolin64",
