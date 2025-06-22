@@ -21,10 +21,13 @@
         Soy fiel creyente de que la mejor manera de aprender, es enseñando. Es por eso que he decidido crear este sitio web para compartir con el mundo todo lo que he aprendido y sigo aprendiendo sobre la ciberseguridad y el <i>hacking</i> ético.
       </p>
     </div>
+    <SocialLinks class="mt-24"/>
   </main>
 </template>
 
 <script setup>
+import SocialLinks from '~/components/Home/SocialLinks.vue';
+
 const description = "";
 useSeoMeta({
   title: "Sobre mi | Picolin64",
