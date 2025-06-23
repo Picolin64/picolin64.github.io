@@ -38,7 +38,7 @@ details {
   border: 2px solid rgba(132, 204, 22, 0.6);
   border-radius: 10px;
 }
-code[data-v-inspector="node_modules/@nuxt/content/dist/runtime/components/Prose/ProseCodeInline.vue:2:3"]{
+code[class=""]{
   padding-left: 4px;
   padding-right: 4px;
   padding-bottom: 2px;
