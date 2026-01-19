@@ -3,7 +3,7 @@ const colorMode = useColorMode();
 
 const isDark = computed({
   get() {
-    return colorMode.value === "dark";
+    return colorMode.value === "light";
   },
   set() {
     colorMode.preference = colorMode.value === "dark" ? "light" : "dark";
@@ -19,7 +19,7 @@ const isDark = computed({
     >
       <Icon
         aria-hidden="true"
-        :name="isDark ? 'ph:sun-bold' : 'ph:moon-bold'"
+        :name="isDark ? 'ph:moon-bold' : 'ph:sun-bold'"
         class="w-5 h-5"
       />
       <span class="sr-only">Toggle theme</span>
