@@ -110,6 +110,7 @@ ttpassgen -r "[?u]{1:1}" wordlist.txt
         <li><b>-r [regla]:</b>Regla a usar (consultar el repositorio de GitHub para mayor información).</li>
 </ul>
 </details>
+<br/>
 
 ```text [wordlist.txt]
 A
@@ -171,11 +172,11 @@ curl -sL -H "User-Agent: C" http://10.10.195.209/
 ```text
 curl -sL -H "User-Agent: C" http://10.10.195.209/
 
-Attention chris, <br><br>
+Attention chris,
 
 Do you still remember our deal? Please tell agent J about the stuff ASAP. Also, change your god damn password, is weak! <br><br>
 
-From,<br>
+From,
 Agent R
 ```
 
