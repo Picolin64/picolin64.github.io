@@ -59,7 +59,7 @@ La única forma de sortear esta herramienta es interactuando manualmente con cad
 
 ## Evadir portspoof con Nmap
 
-Sin la naturaleza propia de la herramienta tiene sus fallas (es una herramienta vieja después de todo) y es posible sortear estas contramedidas haciendo uso de escaneos TCP NULL, FIN y XMAS. ``portspoof`` espera recibir un paquete ``SYN`` en los puertos "camuflados" al inicio de una conexión TCP para luego aparentar que el puerto esta abierto y enviar información falsa en el *banner*, pero no espera recibir paquetes malformados o que se inicie una conexión TCP con paquetes diferentes al usual ``SYN``. En caso de recibir un paquete diferente al usual ``SYN``, la herramienta no tendrá efecto y el *host* se vera forzado a enviar una respuesta conforme al RFC correspondiente.
+La naturaleza propia de la herramienta tiene sus fallas (es una herramienta vieja después de todo) y es posible sortear estas contramedidas haciendo uso de escaneos TCP NULL, FIN y XMAS. ``portspoof`` espera recibir un paquete ``SYN`` en los puertos "camuflados" al inicio de una conexión TCP para luego aparentar que el puerto esta abierto y enviar información falsa en el *banner*, pero no espera recibir paquetes malformados o que se inicie una conexión TCP con paquetes diferentes al usual ``SYN``. En caso de recibir un paquete diferente al usual ``SYN``, la herramienta no tendrá efecto y el *host* se vera forzado a enviar una respuesta conforme al RFC correspondiente.
 
 ### Escaneos TCP NULL, FIN y XMAS
 
