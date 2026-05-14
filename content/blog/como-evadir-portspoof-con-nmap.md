@@ -2,6 +2,7 @@
 title: "Como evadir \"portspoof\" con Nmap"
 description: "Aprende sobre \"portspoof\", una herramienta para camuflar puertos cerrados como activos, y como evadirla durante el escaneo de un host con Nmap."
 published: 2025/07/18
+last-modified: 2026/01/21
 slug: "como-evadir-portspoof-con-nmap"
 ---
 

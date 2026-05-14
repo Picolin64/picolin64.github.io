@@ -2,6 +2,7 @@
 title: "Plantilla de post"
 description: "Esto es la plantilla para un post."
 published: 2025/05/28
+last-modified: 2026/02/05
 slug: "template"
 ---
 
